@@ -1,0 +1,23 @@
+{
+  "name": "exchange_market_monitor",
+  "version": "1.0.0",
+  "description": "Monitors cryptocurrency exchanges for market changes",
+  "main": "index.js",
+  "dependencies": {
+    "request": "^2.83.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lspiehler/exchange_market_monitor.git"
+  },
+  "author": "Lyas spiehler",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lspiehler/exchange_market_monitor/issues"
+  },
+  "homepage": "https://github.com/lspiehler/exchange_market_monitor#readme"
+}
