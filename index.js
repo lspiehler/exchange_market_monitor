@@ -101,21 +101,21 @@ var exchangeMonitor = function(apidata) {
 			if(apidata.structure=='array') {
 				for(var i = 0; i <= data.length - 1; i++) {
 					//console.log(data[i][apidata.marketnameprop]);
-					if(cachedmarkets.length == 0 && (i==5 || i==1000)) {
+					//if(cachedmarkets.length == 0 && (i==5 || i==1000)) {
 						//newmarkets.push(data[i][apidata.marketnameprop]);
-						newmarkets.push('Lyas');
-					} else {
+						//newmarkets.push('Lyas');
+					//} else {
 						newmarkets.push(data[i][apidata.marketnameprop]);
-					}
+					//}
 				}
 			} else if(apidata.structure=='object') {
 				for(var key in data) {
-					if(cachedmarkets.length == 0 && key=='XZECZUSD') {
+					//if(cachedmarkets.length == 0 && key=='XZECZUSD') {
 						//newmarkets.push(data[i][apidata.marketnameprop]);
-						newmarkets.push('Lyas');
-					} else {
+						//newmarkets.push('Lyas');
+					//} else {
 						newmarkets.push(data[key][apidata.marketnameprop]);
-					}
+					//}
 				}
 			} else {
 				callback('Invalid API structure',false);
