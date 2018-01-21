@@ -229,7 +229,7 @@ var exchangeMonitor = function(apidata) {
 				if(cachedmarkets.length > 0) {
 					//query();
 				} else {
-					//console.log('ERROR on ' + name);
+					callback('failed to update cached markets', 'failed to update cached markets');
 				}
 			} else {
 				//compare newarray against old array to check for removals
@@ -249,11 +249,12 @@ var exchangeMonitor = function(apidata) {
 						update.removed.push(cachedmarkets[i]);
 					}
 				}
+				cachedmarkets = newmarkets;
 			}
 			update.markets = newmarkets;
 			//console.log(cachedmarkets);
 			//console.log(data.length);
-			callback(err,update);
+			callback(false,update);
 			return;
 		});
 	}
