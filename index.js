@@ -6,8 +6,8 @@ const TelegramBot = require('node-telegram-bot-api');
 // replace the value below with the Telegram token you receive from @BotFather
 const token = '';
 const fromaddress = '';
-const toaddress = '';
-const groupchatid = '';
+const toaddress = ''
+const groupchatid = ''
 const mailserver = '';
  
 // Create a bot that uses 'polling' to fetch new updates
@@ -89,6 +89,13 @@ var exchangeAPIData = {
 		url: 'https://api.bitfinex.com/v1/symbols_details',
 		datarespprop: false,
 		marketnameprop: 'pair',
+		structure: 'array'
+	},
+	kucoin: {
+		name: 'KuCoin',
+		url: 'https://api.kucoin.com/v1/market/open/symbols',
+		datarespprop: 'data',
+		marketnameprop: 'symbol',
 		structure: 'array'
 	}
 };
