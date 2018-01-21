@@ -9,6 +9,7 @@ Get notified when a market is added or removed from an exchange.
 * HitBTC
 * Binance
 * Kraken
+* Bitfinex
 
 ## Author
 Lyas Spiehler

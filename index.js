@@ -44,6 +44,13 @@ var exchangeAPIData = {
 		datarespprop: 'result',
 		marketnameprop: 'altname',
 		structure: 'object'
+	},
+	bitfinex: {
+		name: 'Bitfinex',
+		url: 'https://api.bitfinex.com/v1/symbols_details',
+		datarespprop: false,
+		marketnameprop: 'pair',
+		structure: 'array'
 	}
 };
 
@@ -215,7 +222,7 @@ var processUpdates = function(updates) {
 		var message = 'Added:\r\n' + updates.added.join('\r\n') + '\r\nRemoved:\r\n' + updates.removed.join('\r\n')
 		var mailOptions = {
 			from: 'fromaddress', // sender address
-			to: 'lspiehler@gmail.com,9852652742@txt.att.net', // list of receivers
+			to: 'toaddress', // list of receivers
 			subject: 'Market Change on ' + updates.exchange, // Subject line
 			text: message
 			//html: '<p>Your html here</p>'// plain text body
