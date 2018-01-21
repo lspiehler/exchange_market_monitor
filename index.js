@@ -204,7 +204,7 @@ var exchangeMonitorLoop = function(index) {
 			processUpdates(update);
 			setTimeout( function() {
 				exchangeMonitorLoop(next);
-			}, 5000);
+			}, 60000);
 		});
 	}
 }
@@ -215,7 +215,7 @@ var processUpdates = function(updates) {
 		var message = 'Added:\r\n' + updates.added.join('\r\n') + '\r\nRemoved:\r\n' + updates.removed.join('\r\n')
 		var mailOptions = {
 			from: 'fromaddress', // sender address
-			to: 'toaddress', // list of receivers
+			to: 'lspiehler@gmail.com,9852652742@txt.att.net', // list of receivers
 			subject: 'Market Change on ' + updates.exchange, // Subject line
 			text: message
 			//html: '<p>Your html here</p>'// plain text body
