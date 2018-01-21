@@ -1,6 +1,45 @@
 'use strict';
 const request = require('request');
 const nodemailer = require('nodemailer');
+const TelegramBot = require('node-telegram-bot-api');
+ 
+// replace the value below with the Telegram token you receive from @BotFather
+const token = '';
+const fromaddress = '';
+const toaddress = '';
+const groupchatid = '';
+const mailserver = '';
+ 
+// Create a bot that uses 'polling' to fetch new updates
+const bot = new TelegramBot(token, {polling: true});
+
+/*bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
+  
+  console.log(chatId);
+ 
+  // send a message to the chat acknowledging receipt of their message
+  bot.sendMessage(chatId, 'Chat ID is ' + chatId + '. Don\'t fucking talk to me!');
+});*/
+
+bot.onText(/\/status/, (msg, match) => {
+  // 'msg' is the received Message from Telegram
+  // 'match' is the result of executing the regexp above on the text content
+  // of the message
+ 
+  const chatId = msg.chat.id;
+  const resp = getStatus(); // the captured "whatever"
+ 
+  // send back the matched "whatever" to the chat
+  bot.sendMessage(chatId, resp);
+});
+
+bot.onText(/\/info/, (msg, match) => {
+ 
+  const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId, 'I am designed to send notification when any market changes happen on an exchange. See my code here https://github.com/lspiehler/exchange_market_monitor. You can see what exchanges I monitor using the /status command.');
+});
 
 var exchangeAPIData = {
 	bittrex: {
@@ -63,7 +102,7 @@ var exchangeAPIData = {
 });*/
 
 var transporter = nodemailer.createTransport({
-    host: '127.0.0.1',
+    host: mailserver,
     port: 25,
     /*auth: {
         user: 'username',
@@ -95,6 +134,10 @@ var exchangeMonitor = function(apidata) {
 			}
 		}
 		return false;
+	}
+	
+	this.getMarkets = function() {
+		return cachedmarkets;
 	}
 
 	var query = function(callback) {
@@ -133,7 +176,7 @@ var exchangeMonitor = function(apidata) {
 					//console.log(data[i][apidata.marketnameprop]);
 					//if(name == 'Bittrex' && cachedmarkets.length == 0 && (i==5 || i==1000)) {
 						//newmarkets.push(data[i][apidata.marketnameprop]);
-						//newmarkets.push('Lyas');
+						//newmarkets.push('FAKE');
 					//} else {
 						newmarkets.push(data[i][apidata.marketnameprop]);
 					//}
@@ -197,6 +240,14 @@ for (var key in exchangeAPIData) {
 	}
 }
 
+var getStatus = function() {
+	var status = '';
+	for(var i = 0; i <= exchanges.length - 1; i++) {
+		status += exchanges[i].name() + ', tracking ' + exchanges[i].getMarkets().length + ' markets\r\n'
+	}
+	return status;
+}
+
 var exchangeMonitorLoop = function(index) {
 	var next = 0;
 	//console.log(exchanges[index].name());
@@ -218,11 +269,13 @@ var exchangeMonitorLoop = function(index) {
 
 var processUpdates = function(updates) {
 	console.log('Queried ' + updates.markets.length + ' markets on ' + updates.exchange + ': ' + updates.added.length + ' added, ' + updates.removed.length + ' removed');
+	//bot.sendMessage(chatid, 'Queried ' + updates.markets.length + ' markets on ' + updates.exchange + ': ' + updates.added.length + ' added, ' + updates.removed.length + ' removed');
 	if(updates.added.length > 0 || updates.removed.length > 0) {
 		var message = 'Added:\r\n' + updates.added.join('\r\n') + '\r\nRemoved:\r\n' + updates.removed.join('\r\n')
+		bot.sendMessage(groupchatid, 'Market change detected on ' + updates.exchange + '\r\n' + message);
 		var mailOptions = {
-			from: 'fromaddress', // sender address
-			to: 'toaddress', // list of receivers
+			from: fromaddress, // sender address
+			to: toaddress, // list of receivers
 			subject: 'Market Change on ' + updates.exchange, // Subject line
 			text: message
 			//html: '<p>Your html here</p>'// plain text body
