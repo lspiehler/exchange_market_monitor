@@ -7,8 +7,9 @@ const TelegramBot = require('node-telegram-bot-api');
 const token = '';
 const fromaddress = '';
 const toaddress = '';
-const groupchatid = ''
+const groupchatid = '';
 const mailserver = '';
+const privatechatid = '';
  
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
@@ -274,12 +275,20 @@ var exchangeMonitorLoop = function(index) {
 	if(index < exchanges.length - 1) {
 		next = index + 1;
 		exchanges[index].query( function(err, update) {
-			processUpdates(update);
+			if(err) {
+				bot.sendMessage(privatechatid, err);
+			} else {
+				processUpdates(update);
+			}
 			exchangeMonitorLoop(next);
 		});
 	} else {
 		exchanges[index].query( function(err, update) {
-			processUpdates(update);
+			if(err) {
+				bot.sendMessage(privatechatid, err);
+			} else {
+				processUpdates(update);
+			}
 			setTimeout( function() {
 				exchangeMonitorLoop(next);
 			}, 60000);
