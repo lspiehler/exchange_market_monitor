@@ -4,12 +4,12 @@ const nodemailer = require('nodemailer');
 const TelegramBot = require('node-telegram-bot-api');
  
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '';
-const fromaddress = '';
-const toaddress = '';
-const groupchatid = '';
-const mailserver = '';
-const privatechatid = '';
+const token = '542256707:AAEgTwUEQ5bFPeVtE6BeE6-AsWDOYjwzKAE';
+const fromaddress = 'lyas.spiehler@notjustnetworks.com';
+const toaddress = 'lspiehler@gmail.com,9852652742@txt.att.net';
+const groupchatid = '-1001255356539';
+const mailserver = '192.168.1.56';
+const privatechatid = '456322015';
  
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
@@ -178,7 +178,12 @@ var exchangeMonitor = function(apidata) {
 		
 		request(options, (err, res, body) => {
 			if (err) { callback(err,false); return; }
-			var response = JSON.parse(body);
+			try {
+				var response = JSON.parse(body);
+			} catch(e) {
+				callback(e,'Error parsing JSON');
+				return;
+			}
 			//console.log(response);
 			var newmarkets = [];
 			var data;
@@ -213,6 +218,7 @@ var exchangeMonitor = function(apidata) {
 				}
 			} else {
 				callback('Invalid API structure',false);
+				return;
 			}
 			if(cachedmarkets.length == 0) {
 				cachedmarkets = newmarkets;
@@ -276,6 +282,7 @@ var exchangeMonitorLoop = function(index) {
 		next = index + 1;
 		exchanges[index].query( function(err, update) {
 			if(err) {
+				console.log(err + ' ' + update);
 				bot.sendMessage(privatechatid, err);
 			} else {
 				processUpdates(update);
@@ -285,6 +292,7 @@ var exchangeMonitorLoop = function(index) {
 	} else {
 		exchanges[index].query( function(err, update) {
 			if(err) {
+				console.log(err + ' ' + update);
 				bot.sendMessage(privatechatid, err);
 			} else {
 				processUpdates(update);
