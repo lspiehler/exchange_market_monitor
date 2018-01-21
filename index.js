@@ -6,7 +6,7 @@ const TelegramBot = require('node-telegram-bot-api');
 // replace the value below with the Telegram token you receive from @BotFather
 const token = '';
 const fromaddress = '';
-const toaddress = ''
+const toaddress = '';
 const groupchatid = ''
 const mailserver = '';
  
@@ -37,6 +37,8 @@ bot.onText(/\/status/, (msg, match) => {
 bot.onText(/\/info/, (msg, match) => {
  
   const chatId = msg.chat.id;
+  
+  console.log('Info requested from chat ID ' + chatId);
 
   bot.sendMessage(chatId, 'I am designed to send notification when any market changes happen on an exchange. See my code here https://github.com/lspiehler/exchange_market_monitor. You can see what exchanges I monitor using the /status command.');
 });
@@ -97,6 +99,13 @@ var exchangeAPIData = {
 		datarespprop: 'data',
 		marketnameprop: 'symbol',
 		structure: 'array'
+	},
+	poloniex: {
+		name: 'Poloniex',
+		url: 'https://poloniex.com/public?command=returnTicker',
+		datarespprop: false,
+		marketnameprop: false,
+		structure: 'object'
 	}
 };
 
@@ -181,20 +190,24 @@ var exchangeMonitor = function(apidata) {
 			if(apidata.structure=='array') {
 				for(var i = 0; i <= data.length - 1; i++) {
 					//console.log(data[i][apidata.marketnameprop]);
-					//if(name == 'Bittrex' && cachedmarkets.length == 0 && (i==5 || i==1000)) {
+					//if(name == 'Poloniex' && cachedmarkets.length == 0 && (i==5 || i==1000)) {
 						//newmarkets.push(data[i][apidata.marketnameprop]);
-						//newmarkets.push('FAKE');
+						//newmarkets.push('LYAS');
 					//} else {
 						newmarkets.push(data[i][apidata.marketnameprop]);
 					//}
 				}
 			} else if(apidata.structure=='object') {
 				for(var key in data) {
-					//if(cachedmarkets.length == 0 && key=='XZECZUSD') {
+					//if(name == 'Poloniex' && cachedmarkets.length == 0 && key=='BTC_MAID') {
 						//newmarkets.push(data[i][apidata.marketnameprop]);
 						//newmarkets.push('Lyas');
 					//} else {
-						newmarkets.push(data[key][apidata.marketnameprop]);
+						if(apidata.marketnameprop) {
+							newmarkets.push(data[key][apidata.marketnameprop]);
+						} else {
+							newmarkets.push(key);
+						}
 					//}
 				}
 			} else {
