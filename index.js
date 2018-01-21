@@ -1,4 +1,6 @@
+'use strict';
 const request = require('request');
+const nodemailer = require('nodemailer');
 
 var exchangeAPIData = {
 	bittrex: {
@@ -44,6 +46,27 @@ var exchangeAPIData = {
 		structure: 'object'
 	}
 };
+
+/*var transporter = nodemailer.createTransport({
+	service: 'Gmail',
+	auth: {
+		user: 'username',
+		pass: 'password'
+	}
+});*/
+
+var transporter = nodemailer.createTransport({
+    host: '127.0.0.1',
+    port: 25,
+    /*auth: {
+        user: 'username',
+        pass: 'password'
+    }*/
+	tls: {
+        // do not fail on invalid certs
+        rejectUnauthorized: false
+    }
+});
 
 var exchangeMonitor = function(apidata) {
 	var cachedmarkets = [];
@@ -101,7 +124,7 @@ var exchangeMonitor = function(apidata) {
 			if(apidata.structure=='array') {
 				for(var i = 0; i <= data.length - 1; i++) {
 					//console.log(data[i][apidata.marketnameprop]);
-					//if(cachedmarkets.length == 0 && (i==5 || i==1000)) {
+					//if(name == 'Bittrex' && cachedmarkets.length == 0 && (i==5 || i==1000)) {
 						//newmarkets.push(data[i][apidata.marketnameprop]);
 						//newmarkets.push('Lyas');
 					//} else {
@@ -181,7 +204,7 @@ var exchangeMonitorLoop = function(index) {
 			processUpdates(update);
 			setTimeout( function() {
 				exchangeMonitorLoop(next);
-			}, 60000);
+			}, 5000);
 		});
 	}
 }
@@ -189,8 +212,20 @@ var exchangeMonitorLoop = function(index) {
 var processUpdates = function(updates) {
 	console.log('Queried ' + updates.markets.length + ' markets on ' + updates.exchange + ': ' + updates.added.length + ' added, ' + updates.removed.length + ' removed');
 	if(updates.added.length > 0 || updates.removed.length > 0) {
-		var message = 'Market update on ' + updates.exchange + '.\r\n\r\nAdded:\r\n\t' + updates.added.join('\r\n\t') + '\r\nRemoved:\r\n\t' + updates.removed.join('\r\n\t')
-		console.log(message);
+		var message = 'Added:\r\n' + updates.added.join('\r\n') + '\r\nRemoved:\r\n' + updates.removed.join('\r\n')
+		var mailOptions = {
+			from: 'fromaddress', // sender address
+			to: 'toaddress', // list of receivers
+			subject: 'Market Change on ' + updates.exchange, // Subject line
+			text: message
+			//html: '<p>Your html here</p>'// plain text body
+		};
+		transporter.sendMail(mailOptions, function (err, info) {
+			if(err)
+				console.log(err)
+			else
+				console.log(info);
+		});
 	}
 }
 
