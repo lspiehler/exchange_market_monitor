@@ -190,10 +190,15 @@ var exchangeMonitor = function(apidata) {
 			//console.log(response);
 			var newmarkets = [];
 			var data;
-			if(apidata.datarespprop) {
-				data = response[apidata.datarespprop];
-			} else {
-				data = response;
+			try {
+				if(apidata.datarespprop) {
+					data = response[apidata.datarespprop];
+				} else {
+					data = response;
+				}
+			} catch (e) {
+				callback(e,'Error accessing property in JSON string');
+				return;
 			}
 			//console.log(data);
 			if(apidata.structure=='array') {
